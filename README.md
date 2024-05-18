@@ -100,7 +100,7 @@ API documentation is available via Postman. Import the provided Postman collecti
   - **POST** `/list/upload?listId=123`
   - **FORMDATA**: CSV file with file name as `file` and contents as .csv file.
 
-### User Endpoints
+### Mail Endpoints
 
 - **SEND MAIL**
   - **POST** `/mail/send`
