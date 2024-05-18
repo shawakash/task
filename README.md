@@ -82,7 +82,7 @@ This project is a RESTful API for managing user lists with customizable properti
    yarn dev
    ```
 
-### API Documentation
+### [API Documentation](https://www.postman.com/gold-satellite-349598/workspace/sample-task2/collection/25327073-c2a75fb2-c5a1-471f-88ce-9dbe664cf177?action=share&creator=25327073)
 
 API documentation is available via Postman. Import the provided Postman collection to explore and test the API endpoints.
 
