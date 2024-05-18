@@ -26,7 +26,6 @@ listRouter.post("/create", async (req, res) => {
 listRouter.post("/upload", async (req, res) => {
   try {
     const { listId } = UploadUserSchema.parse(req.query);
-    console.log(req.file);
     const list = await List.findById(listId);
 
     if (!list) {
