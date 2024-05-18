@@ -1,0 +1,41 @@
+name: Deploy backend-task
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/task/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "backend/task/**"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: "mv docker/task/Dockerfile ."
+
+      - name: add secrets
+        env:
+          DOCKER_USER: ${{secrets.DOCKERHUB_USERNAME}}
+          DOCKER_PASSWORD: ${{secrets.DOCKERHUB_TOKEN}}
+        run: |
+          cd backend/task
+          touch .env
+          printf 'MONGODB_URI=%s\n' "${{secrets.MONGODB_URI}}" >> .env
+          cd ../..
+
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKERHUB_USERNAME}}
+          DOCKER_PASSWORD: ${{secrets.DOCKERHUB_TOKEN}}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: Build the Docker image
+        run: docker build . --tag shawakash/task-task:${{ github.sha }}
+
+      - name: Docker Push
+        run: docker push shawakash/task-task:${{ github.sha }}
