@@ -2,9 +2,11 @@ let express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
+let { ProducerWorker } = require("./worker/producer");
 
 let { dbConnect } = require("./db/mongoose");
 let listRouter = require("./routes/list");
+let mailRouter = require("./routes/mail");
 const morgan = require("morgan");
 
 const app = express();
@@ -30,8 +32,14 @@ app.get("/", (req, res) => {
 });
 
 app.use("/list", listRouter);
+app.use("/mail", mailRouter);
 
 Promise.all([
+  new Promise(async (resolve, reject) => {
+    await ProducerWorker.getInstance()
+      .connectProducer()
+      .then(() => resolve());
+  }),
   new Promise(async (resolve, reject) => {
     console.log("Connecting to database...");
     await dbConnect().then(() => resolve());
