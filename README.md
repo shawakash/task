@@ -1,81 +1,132 @@
-# Turborepo starter
+# User List Management and Email Sending API
 
-This is an official starter Turborepo.
+## Overview
 
-## Using this example
+This project is a RESTful API for managing user lists with customizable properties and sending emails to users. The API supports creating lists, adding users via CSV uploads, and sending emails with custom property placeholders.
 
-Run the following command:
+## Features
 
-```sh
-npx create-turbo@latest
-```
+1. **List Creation**: Admin can create a list with a title and custom properties -> `/list/create` endpoint.
+2. **User Addition**: Admin can add users to the list via CSV upload -> `/list/upload?listId=123` endpoint.
+3. **CSV Format**: Supports CSV with required headers `name` and `email`, along with custom properties.
+4. **Unique Emails**: Ensures no duplicate emails within a list.
+5. **Error Handling**: Provides feedback on users not added due to errors.
+6. **Bonus Features**:
+   - Send emails to all users in a list with a subject and emailBody -> `/mail/send` endpoint.
+   - Custom properties as placeholders in email body.
+   - Unsubscribe link to remove users from the mailing list.
 
-## What's inside?
+## Tech Stack
 
-This Turborepo includes the following packages/apps:
+- Node.js
+- Express.js
+- MongoDB
+- Message Queue (e.g., Kakfka) for robustness and scalability.
 
-### Apps and Packages
+## Getting Started
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Prerequisites
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- Node.js
+- MongoDB
+- Message Queue (e.g., Kafka)
 
-### Utilities
+### Installation
 
-This Turborepo has some additional tools already setup for you:
+1. Clone the repository:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+   ```bash
+   git clone https://github.com/shawakash/task.git
+   cd task
+   ```
 
-### Build
+2. Install dependencies:
 
-To build all apps and packages, run the following command:
+   ```bash
+   yarn install
+   ```
 
-```
-cd my-turborepo
-pnpm build
-```
+3. Set up environment variables for task. Create a `.env` file in the backend/task directory and add the following:
 
-### Develop
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/userlist
+   ```
 
-To develop all apps and packages, run the following command:
+4. Set up environment variables for worker. Create a `.env` file in the backend/worker directory and add the following:
 
-```
-cd my-turborepo
-pnpm dev
-```
+   ```env
+   GMAIL_APP_PASS=your_app_password
+   GMAIL=dev.payBox@gmail.com
+   MAIL_SERVICE=gmail
+   MONGODB_URI=mongodb://localhost:27017/userlist
+   ```
 
-### Remote Caching
+5. Start the Kafka Service Locally:
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+   ```bash
+   cd docker/kafka
+   docker-compose up -d
+   cd ../..
+   ```
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+6. Start the Worker Service:
 
-```
-cd my-turborepo
-npx turbo login
-```
+   ```bash
+   cd backend/worker
+   yarn dev
+   ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+7. Start the task backend:
+   ```bash
+   cd backend/task
+   yarn dev
+   ```
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+### API Documentation
 
-```
-npx turbo link
-```
+API documentation is available via Postman. Import the provided Postman collection to explore and test the API endpoints.
 
-## Useful Links
+## Endpoints
 
-Learn more about the power of Turborepo:
+### List Endpoints
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+- **Create List**
+
+  - **POST** `/list/create`
+  - **Body**: `{ "title": "User2", "customProperties": [{"title": "city", "defaultValue": "Barcelone"}, {"title": "state", "defaultValue": "Spain"}]}`
+
+- **Upload CSV**
+
+  - **POST** `/list/upload?listId=123`
+  - **FORMDATA**: CSV file with file name as `file` and contents as .csv file.
+
+### User Endpoints
+
+- **SEND MAIL**
+  - **POST** `/mail/send`
+  - **Body**: `{ "subject": "Email Subject", "emailBody": "Hey [name]!\nThank you for signing up with your email [email]. We have received your city as [city], [state].\nTeam MathonGo.", "listId": "123" }`
+
+## Error Handling
+
+The API provides detailed error messages for invalid requests. When adding users via CSV, the response includes a summary of successes and failures, along with details for each failed record.
+
+## Scalability
+
+- Efficient CSV processing for large files (10,000+ records).
+- [Optional] Integration with a message queue for sending emails to ensure robustness.
+
+## Unsubscribe Feature
+
+Each email contains an unsubscribe link. Clicking this link will unsubscribe the user from the list, preventing them from receiving future emails from that list.
+
+## Deployment
+
+The application can be deployed on any cloud provider. Ensure the environment variables are set appropriately for the production environment.
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request with your changes.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
