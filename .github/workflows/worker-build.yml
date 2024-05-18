@@ -1,0 +1,44 @@
+name: Deploy backend-worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/worker/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "backend/worker/**"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: "mv docker/worker/Dockerfile ."
+
+      - name: add secrets
+        env:
+          DOCKER_USER: ${{secrets.DOCKERHUB_USERNAME}}
+          DOCKER_PASSWORD: ${{secrets.DOCKERHUB_TOKEN}}
+        run: |
+          cd backend/worker
+          touch .env
+          printf 'MONGODB_URI=%s\n' "${{secrets.MONGODB_URI}}" >> .env
+          printf 'GMAIL_APP_PASS=%s\n' "${{secrets.GMAIL_APP_PASS}}" >> .env
+          printf 'GMAIL=%s\n' "${{secrets.GMAIL}}" >> .env
+          printf 'MAIL_SERVICE=%s\n' "${{secrets.MAIL_SERVICE}}" >> .env
+          cd ../..
+
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKERHUB_USERNAME}}
+          DOCKER_PASSWORD: ${{secrets.DOCKERHUB_TOKEN}}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: Build the Docker image
+        run: docker build . --tag shawakash/task-worker:${{ github.sha }}
+
+      - name: Docker Push
+        run: docker push shawakash/task-worker:${{ github.sha }}
