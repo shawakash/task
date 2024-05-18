@@ -18,14 +18,17 @@ const sendEmail = async (listId, emailBody, subject) => {
     if (!list) return;
 
     //todo: distribute this by sending offsets to the consumer
-    for (const user of list.users) {
+    list.users.map(async (user) => {
       if (!user.subscribe) return;
 
       const userProperties = {
-        ...user.properties,
         name: user.name,
         email: user.email,
       };
+
+      for (const [key, value] of user.properties) {
+        userProperties[key] = value;
+      }
 
       const userEmailBody = emailBody.replace(
         /\[([^[\]]*)\]/g,
@@ -40,7 +43,7 @@ const sendEmail = async (listId, emailBody, subject) => {
       };
 
       await transporter.sendMail(mailOptions);
-    }
+    });
     return;
   } catch (e) {
     console.log(e);

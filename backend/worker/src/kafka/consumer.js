@@ -35,6 +35,7 @@ class ConsumerWorker {
 
           switch (topic) {
             case "mail":
+              console.log("\nmail sent event received\n");
               await sendEmail(
                 payload.listId,
                 payload.emailBody,
@@ -46,6 +47,7 @@ class ConsumerWorker {
               console.log("That topic is not yet supported");
               break;
           }
+          return;
         } catch (e) {
           console.log(e);
           return;
