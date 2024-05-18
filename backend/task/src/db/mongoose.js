@@ -23,6 +23,7 @@ const listSchema = new mongoose.Schema({
 });
 
 const List = mongoose.model("List", listSchema);
+const User = mongoose.model("User", userSchema);
 
 const dbConnect = () => {
   if (alreadyConnected) {
@@ -38,4 +39,4 @@ const dbConnect = () => {
   });
 };
 
-module.exports = { dbConnect, List };
+module.exports = { dbConnect, List, User };
