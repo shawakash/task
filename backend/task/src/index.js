@@ -35,11 +35,11 @@ app.use("/list", listRouter);
 app.use("/mail", mailRouter);
 
 Promise.all([
-  new Promise(async (resolve, reject) => {
-    await ProducerWorker.getInstance()
-      .connectProducer()
-      .then(() => resolve());
-  }),
+  // new Promise(async (resolve, reject) => {
+  //   await ProducerWorker.getInstance()
+  //     .connectProducer()
+  //     .then(() => resolve());
+  // }),
   new Promise(async (resolve, reject) => {
     console.log("Connecting to database...");
     await dbConnect().then(() => resolve());
