@@ -113,7 +113,8 @@ The API provides detailed error messages for invalid requests. When adding users
 ## Scalability
 
 - Efficient CSV processing for large files (10,000+ records).
-- [Optional] Integration with a message queue for sending emails to ensure robustness.
+- Integration with a message queue for sending emails to ensure robustness.
+- Can be deployed to kub8s for high scalablity.
 
 ## Unsubscribe Feature
 
