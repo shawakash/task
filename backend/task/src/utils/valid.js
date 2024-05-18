@@ -14,4 +14,10 @@ const UploadUserSchema = z.object({
   listId: z.string().nonempty(),
 });
 
-module.exports = { ListCreateSchema, UploadUserSchema };
+const SendMailSchema = z.object({
+  listId: z.string().nonempty(),
+  emailBody: z.string().nonempty(),
+  subject: z.string().nonempty(),
+});
+
+module.exports = { ListCreateSchema, UploadUserSchema, SendMailSchema };
