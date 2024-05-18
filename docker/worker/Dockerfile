@@ -3,8 +3,6 @@ FROM node:21
 WORKDIR /base
 
 COPY ["package.json", "./package.json"]
-COPY [".yarnrc", "./.yarnrc"]
-COPY [".npmrc", "./.npmrc"]
 COPY [".eslintrc.js", "./.eslintrc.js"]
 COPY ["turbo.json", "./turbo.json"]
 COPY ["yarn.lock", "./yarn.lock"]
