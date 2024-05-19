@@ -1,5 +1,11 @@
 # User List Management and Email Sending API
 
+## Demo Video
+
+Check out the demo video:
+
+[![Demo Video]](https://www.youtube.com/watch?v=jTvA9Uqrhrk)
+
 ## Overview
 
 This project is a RESTful API for managing user lists with customizable properties and sending emails to users. The API supports creating lists, adding users via CSV uploads, and sending emails with custom property placeholders.
